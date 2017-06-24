@@ -3,18 +3,14 @@ const bodyParser = require('body-parser');
 const request = require('request');
 const app = express()
 
-const apiKey = '************';
-let config = {
-  weather: null,
-  error: null
-};
+const apiKey = '*****************';
 
 app.use(express.static('public'));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.set('view engine', 'ejs')
 
 app.get('/', function (req, res) {
-  res.render('index', config);
+  res.render('index', {weather: null, error: null});
 })
 
 app.post('/', function (req, res) {
@@ -23,15 +19,17 @@ app.post('/', function (req, res) {
 
   request(url, function (err, response, body) {
     if(err){
-      config.error = 'Error, please try again';
-      res.render('index', config);
+      res.render('index', {weather: null, error: 'Error, please try again'});
     } else {
       let weather = JSON.parse(body)
-      config.weather = `It's ${weather.main.temp} degrees in ${weather.name}!`;
-      res.render('index', config);
+      if(weather.main == undefined){
+        res.render('index', {weather: null, error: 'Error, please try again'});
+      } else {
+        let weatherText = `It's ${weather.main.temp} degrees in ${weather.name}!`;
+        res.render('index', {weather: weatherText, error: null});
+      }
     }
   });
-
 })
 
 app.listen(3000, function () {
