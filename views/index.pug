@@ -1,0 +1,17 @@
+doctype html
+html
+  head
+    meta(charset='utf-8')
+    title Test
+    link(rel='stylesheet', type='text/css', href='/css/style.css')
+    link(href='https://fonts.googleapis.com/css?family=Open+Sans:300', rel='stylesheet', type='text/css')
+  body
+    .container
+      fieldset
+        form(action='/', method='post')
+          input.ghost-input(name='city', type='text', placeholder='Enter a City', required='')
+          input.ghost-button(type='submit', value='Get Weather')
+        if weather
+          p= weather
+        if error
+          p= error

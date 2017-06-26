@@ -1,13 +1,15 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const request = require('request');
+//const pug = require('pug');
 const app = express()
 
-const apiKey = '*****************';
+const apiKey = '***********************';
+// const apiKey = 'process.env.APIKEY';
 
 app.use(express.static('public'));
 app.use(bodyParser.urlencoded({ extended: true }));
-app.set('view engine', 'ejs')
+app.set('view engine', 'pug')
 
 app.get('/', function (req, res) {
   res.render('index', {weather: null, error: null});
