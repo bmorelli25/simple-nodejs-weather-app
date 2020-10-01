@@ -1,4 +1,4 @@
-# simple-nodejs-weather-app
+# simple-nodejs-weather-application
 Simple Node.js Command Line Weather Application
 
 * Check out the **[Live Demo](https://simple-nodejs-weather-app-irhhpddsku.now.sh/)**
