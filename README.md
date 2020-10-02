@@ -1,4 +1,5 @@
-# simple-nodejs-weather-app
+simple-nodejs-weather - An Useful and Amazing Project
+NOTE: This Project can undergo changes or can be edited in the Hactober Fest
 Simple Node.js Command Line Weather Application
 
 * Check out the **[Live Demo](https://simple-nodejs-weather-app-irhhpddsku.now.sh/)**
