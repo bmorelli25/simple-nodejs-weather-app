@@ -1,0 +1,40 @@
+
+name: 'JFrog CI Integration'
+on: [push]
+jobs:
+ jfrog-ci-integration:
+   runs-on: ubuntu-latest
+   env:
+     JF_ARTIFACTORY_1: ${{ secrets.JF_ARTIFACTORY_SECRET_1 }}
+     JFROG_BUILD_STATUS: PASS
+   steps:
+     - name: Checkout
+       uses: actions/checkout@v2
+     - name: Setup JFrog CLI
+       uses: jfrog/setup-jfrog-cli@v1
+     - name: Set up JDK 11
+       uses: actions/setup-java@v2
+       with:
+         java-version: '11'
+         distribution: 'adopt'
+     - name: Build
+       run: |
+         # Configure the project
+         jfrog rt npm-config --server-id-resolve jfrog-instance --repo-resolve sup016-npm-virtual
+         # Build the project using JFrog CLI
+         jfrog rt npmi
+     - name: Failure check
+       run: |
+         echo "JFROG_BUILD_STATUS=FAIL" >> $GITHUB_ENV
+       if: failure()
+     - name: Publish build
+       run: |
+         # Collect and store environment variables in the build-info
+         jfrog rt bce
+         # Collect and store VCS details in the build-info
+         jfrog rt bag
+         # Publish the build-info to Artifactory
+         jfrog rt bp
+         # Scan the published build-info with Xray
+         jfrog rt bs
+       if: always()
