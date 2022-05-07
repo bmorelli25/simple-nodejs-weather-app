@@ -1,8 +1,0 @@
-version: 1
-type: npm
-resolver:
-  repo: sup016-npm-virtual
-  serverId: jfrog-instance
-deployer:
-  repo: sup016-npm-virtual
-  serverId: jfrog-instance
