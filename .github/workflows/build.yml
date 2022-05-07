@@ -23,6 +23,7 @@ jobs:
          jfrog rt npm-config --server-id-resolve jfrog-instance --repo-resolve sup016-npm-virtual
          # Build the project using JFrog CLI
          jfrog rt npmi
+         jfrog rt publish --build-name=simple-nodejs-weather-app --build-number=${{ env.JFROG_CLI_BUILD_NUMBER }}
      - name: Failure check
        run: |
          echo "JFROG_BUILD_STATUS=FAIL" >> $GITHUB_ENV
