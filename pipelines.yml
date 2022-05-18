@@ -1,0 +1,64 @@
+resources:
+- name: MaharshiPatel_simple_nodejs_weather_app_gitResource
+  type: GitRepo
+  configuration:
+    path: MaharshiPatel/simple-nodejs-weather-app
+    gitProvider: github_MaharshiPatel_simple_nodejs_weather_app_integration
+    buildOn:
+      pullRequestCreate: true
+    branches:
+      include: master
+- name: MaharshiPatel_simple_nodejs_weather_app_buildInfoResource
+  type: BuildInfo
+  configuration:
+    sourceArtifactory: rt_MaharshiPatel_simple_nodejs_weather_app_integration
+    buildName: simple-nodejs-weather-app-master
+    buildNumber: $run_number
+pipelines:
+- name: MaharshiPatel_simple_nodejs_weather_app_pipeline
+  configuration:
+    environmentVariables:
+      readOnly:
+        CI: "true"
+        JFROG_CLI_BUILD_NAME: simple-nodejs-weather-app-master
+        JFROG_CLI_BUILD_NUMBER: $run_number
+        JFROG_CLI_BUILD_URL: $step_url
+  steps:
+  - name: NpmBuildStep
+    type: Bash
+    configuration:
+      environmentVariables:
+        JFROG_BUILD_STATUS: PASS
+      integrations:
+      - name: rt_MaharshiPatel_simple_nodejs_weather_app_integration
+      inputResources:
+      - name: MaharshiPatel_simple_nodejs_weather_app_gitResource
+    execution:
+      onExecute:
+      - cd $res_MaharshiPatel_simple_nodejs_weather_app_gitResource_resourcePath
+      - jfrog rt c MaharshiPatel_simple_nodejs_weather_app_serverId --url $int_rt_MaharshiPatel_simple_nodejs_weather_app_integration_url
+        --user $int_rt_MaharshiPatel_simple_nodejs_weather_app_integration_user --enc-password=false
+      - jfrog rt npm-config --server-id-resolve MaharshiPatel_simple_nodejs_weather_app_serverId
+        --repo-resolve sup016-npm-virtual
+      - jfrog rt npmi
+      - jfrog rt bag
+      - jfrog rt bce
+      onComplete:
+      - add_run_files /tmp/jfrog/. jfrog
+      onFailure:
+      - export JFROG_BUILD_STATUS=FAIL
+      - jfrog rt bce
+      - jfrog rt bp
+  - name: PublishBuildInfoStep
+    type: PublishBuildInfo
+    configuration:
+      inputResources:
+      - name: MaharshiPatel_simple_nodejs_weather_app_gitResource
+      outputResources:
+      - name: MaharshiPatel_simple_nodejs_weather_app_buildInfoResource
+      inputSteps:
+      - name: NpmBuildStep
+      forceXrayScan: true
+    execution:
+      onComplete:
+      - update_commit_status MaharshiPatel_simple_nodejs_weather_app_gitResource
