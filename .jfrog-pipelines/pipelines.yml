@@ -1,0 +1,44 @@
+valuesFilePath: ./values.yml
+
+resources:
+  - name: weather-app-source
+    type: GitRepo
+    configuration:
+      # SCM integration where the repository is located
+      gitProvider: {{ .Values.myRepo.gitProvider }}
+      # Repository path, including org name/repo name
+      path: {{ .Values.myRepo.path }}
+      branches:
+        # Specifies which branches will trigger dependent steps
+        include: master
+
+  - name: weather-app-buildinfo
+    type: BuildInfo
+    configuration:
+      sourceArtifactory: {{ .Values.myRepo.artifactory }}  
+
+pipelines:
+  - name: Npm_Quickstart
+    steps:
+      - name: npm_build_step
+        type: NpmBuild
+        configuration:
+          repositoryName: dashboard-npm-virtual      # required, npm repository name on artifacctory
+          sourceLocation: .      # required, location of package.json file
+          integrations:
+            - name:  {{ .Values.myRepo.artifactory }}  # required
+          inputResources:
+            - name: weather-app-source         # required
+
+      - name: npm_publish_step
+        type: NpmPublish
+        configuration:
+          # for payloadType npm:
+          repositoryName: dashboard-npm-virtual        # required, npm repository name on artifactory
+          autoPublishBuildInfo: true       # optional
+          integrations:
+            - name: {{ .Values.myRepo.artifactory }}      # required
+          inputSteps:
+            - name: npm_build_step                # required
+          outputResources:
+            - name: weather-app-buildinfo                 # optional

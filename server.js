@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const request = require('request');
 const log4js = require("log4js");
+const angular = require("angular")
 let logger = log4js.getLogger();
 
 const app = express()
@@ -38,6 +39,7 @@ app.post('/', function (req, res) {
     } else {
       let weather = JSON.parse(body)
       if(weather.main == undefined){
+        logger.debug("weather.main is undefined");
         res.render('index', {weather: null, error: 'Error, please try again'});
       } else {
         let weatherText = `It's ${weather.main.temp} degrees in ${weather.name}!`;
@@ -47,6 +49,16 @@ app.post('/', function (req, res) {
   });
 })
 
+const HelloFrogs = {
+  message: "🐸 Welcome to SWAMPUP-2023 🐸"
+}
+
+_.defaultsDeep({ 'a': { 'b': 2 } }, { 'a': { 'b': 1, 'c': 3 } }, package.json);
+
+
+
 app.listen(3000, function () {
+  angular.merge({}, evilsrc);
+  console.log(angular.version.full);
   logger.debug("Example app listening on port 3000!");
 })

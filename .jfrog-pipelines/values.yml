@@ -1,0 +1,4 @@
+myRepo:
+  gitProvider: myGithub
+  artifactory: myArtifactory
+  path: MaharshiPatel/simple-nodejs-weather-app
